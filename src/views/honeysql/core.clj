@@ -1,12 +1,12 @@
 (ns views.honeysql.core
   (:require
-    [views.core :refer [hint]]
+    [views.core :refer [hint refresh-views!]]
     [views.honeysql.util :refer [query-tables]]
     [honeysql.core :as hsql]
     [clojure.tools.logging :refer [error]]
     [clojure.java.jdbc :as j]))
 
-(def send-hints! (atom (fn [hints] (error "send-hints! not configured"))))
+(def send-hints! (atom (fn [hints] (refresh-views! hints))))
 
 (defmacro with-view-transaction
   "Like with-db-transaction, but sends view hints at end of transaction."
