@@ -1,12 +1,14 @@
 (ns views.honeysql.core
   (:require
-    [views.core :refer [hint refresh-views!]]
+    [views.core :refer [view-system hint refresh-views!]]
     [views.honeysql.util :refer [query-tables]]
     [honeysql.core :as hsql]
     [clojure.tools.logging :refer [error]]
     [clojure.java.jdbc :as j]))
 
-(def send-hints! (atom (fn [hints] (refresh-views! hints))))
+(defn send-hints!
+  [hints]
+  ((:put-hints-fn @view-system) hints))
 
 (defmacro with-view-transaction
   "Like with-db-transaction, but sends view hints at end of transaction."
@@ -18,7 +20,7 @@
              result#  (j/with-db-transaction [t# ~db ~@args]
                                              (let [~tvar (assoc ~db :hints hints#)]
                                                ~@forms))]
-         (@send-hints! @hints#)
+         (send-hints! @hints#)
          result#))))
 
 (defn execute-honeysql!
@@ -41,12 +43,5 @@
         hsql-hint (hint :views/honeysql (query-tables action-map))]
     (if-let [hints (:hints db)]
       (swap! hints conj hsql-hint)
-      (@send-hints! [hsql-hint]))
+      (send-hints! [hsql-hint]))
     results))
-
-(defn set-hint-transport-fn!
-  "The hint transport function should take a collection of hints and
-   send them to the configured view system. On a non-distribued server this
-   can be: (fn [hints] (refresh-views! views-config hints))"
-  [f]
-  (reset! send-hints! f))
