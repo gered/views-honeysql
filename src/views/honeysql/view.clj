@@ -1,6 +1,7 @@
 (ns views.honeysql.view
   (:require
     [views.protocols :refer :all]
+    [views.honeysql.core :refer [hint-type]]
     [views.honeysql.util :refer [query-tables]]
     [honeysql.core :as hsql]
     [clojure.set :refer [intersection]]
@@ -18,7 +19,8 @@
       data))
   (relevant? [_ namespace parameters hints]
     (let [tables (query-tables (apply query-fn parameters))
-          nhints (filter #(= :views/honeysql (:namespace %)) hints)]
+          nhints (filter #(and (= namespace (:namespace %))
+                               (= hint-type (:type %))) hints)]
       (boolean (some #(not-empty (intersection (:hint %) tables)) nhints)))))
 
 (defn view

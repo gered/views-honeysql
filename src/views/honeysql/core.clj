@@ -6,6 +6,8 @@
     [clojure.tools.logging :refer [error]]
     [clojure.java.jdbc :as j]))
 
+(def hint-type :sql-table-name)
+
 (defn send-hints!
   [hints]
   ((:put-hints-fn @view-system) hints))
@@ -38,10 +40,12 @@
    Arguments are:
    - db: a clojure.java.jdbc database with fid field
    - action-map: the HoneySQL map for the insert/update/delete action"
-  [db action-map]
-  (let [results   (execute-honeysql! db action-map)
-        hsql-hint (hint :views/honeysql (query-tables action-map))]
-    (if-let [hints (:hints db)]
-      (swap! hints conj hsql-hint)
-      (send-hints! [hsql-hint]))
-    results))
+  ([db namespace action-map]
+   (let [results   (execute-honeysql! db action-map)
+         hsql-hint (hint namespace (query-tables action-map) hint-type)]
+     (if-let [hints (:hints db)]
+       (swap! hints conj hsql-hint)
+       (send-hints! [hsql-hint]))
+     results))
+  ([db action-map]
+    (vexec! db nil action-map)))
