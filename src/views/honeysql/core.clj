@@ -1,16 +1,12 @@
 (ns views.honeysql.core
   (:require
-    [views.core :refer [view-system hint refresh-views!]]
+    [views.core :refer [view-system hint put-hints!]]
     [views.honeysql.util :refer [query-tables]]
     [honeysql.core :as hsql]
     [clojure.tools.logging :refer [error]]
     [clojure.java.jdbc :as j]))
 
 (def hint-type :sql-table-name)
-
-(defn send-hints!
-  [hints]
-  ((:put-hints-fn @view-system) hints))
 
 (defmacro with-view-transaction
   "Like jdbc's with-db-transaction, but sends view hints at end of transaction."
@@ -22,7 +18,7 @@
              result#  (j/with-db-transaction [t# ~db ~@args]
                                              (let [~tvar (assoc ~db :hints hints#)]
                                                ~@forms))]
-         (send-hints! @hints#)
+         (put-hints! @hints#)
          result#))))
 
 (defn- execute-honeysql!
@@ -46,7 +42,7 @@
          hsql-hint (hint namespace (query-tables action-map) hint-type)]
      (if-let [hints (:hints db)]
        (swap! hints conj hsql-hint)
-       (send-hints! [hsql-hint]))
+       (put-hints! [hsql-hint]))
      results))
   ([db action-map]
     (vexec! db nil action-map)))
