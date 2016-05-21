@@ -12,11 +12,11 @@
   "Like jdbc's with-db-transaction, but sends view hints at end of transaction."
   [binding & forms]
   (let [tvar (first binding), db (second binding), args (drop 2 binding)]
-    `(if (:hints ~db) ;; check if we are in a nested transaction
+    `(if (:views-honeysql/hints ~db) ;; check if we are in a nested transaction
        (let [~tvar ~db] ~@forms)
        (let [hints#   (atom [])
              result#  (j/with-db-transaction [t# ~db ~@args]
-                                             (let [~tvar (assoc ~db :hints hints#)]
+                                             (let [~tvar (assoc ~db :views-honeysql/hints hints#)]
                                                ~@forms))]
          (put-hints! @hints#)
          result#))))
@@ -40,7 +40,7 @@
   ([db namespace action-map]
    (let [results   (execute-honeysql! db action-map)
          hsql-hint (hint namespace (query-tables action-map) hint-type)]
-     (if-let [hints (:hints db)]
+     (if-let [hints (:views-honeysql/hints db)]
        (swap! hints conj hsql-hint)
        (put-hints! [hsql-hint]))
      results))
