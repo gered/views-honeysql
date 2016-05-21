@@ -11,7 +11,9 @@
 (defmacro with-view-transaction
   "Like jdbc's with-db-transaction, but sends view hints at end of transaction."
   [binding & forms]
-  (let [tvar (first binding), db (second binding), args (drop 2 binding)]
+  (let [tvar (first binding)
+        db   (second binding)
+        args (drop 2 binding)]
     `(if (:views-honeysql/hints ~db) ;; check if we are in a nested transaction
        (let [~tvar ~db] ~@forms)
        (let [hints#   (atom [])
