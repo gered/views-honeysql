@@ -1,17 +1,22 @@
 # views-honeysql
-[![Build Status](https://travis-ci.org/kirasystems/views-honeysql.svg?branch=master)](https://travis-ci.org/kirasystems/views-honeysql)
-[![Dependencies Status](https://jarkeeper.com/kirasystems/views-honeysql/status.svg)](https://jarkeeper.com/kirasystems/views-honeysql)
 
-HoneySQL plugin for the view library.
+HoneySQL plugin for the [views](https://github.com/gered/views) library.
 
-[![Clojars Project](http://clojars.org/kirasystems/views-honeysql/latest-version.svg)](http://clojars.org/kirasystems/views-honeysql)
 
-## Usage
+###  This repository is an experimental fork!
 
-FIXME
+I've made some breaking and possibly contentious changes in this fork
+with the end goal of simplifying usage of this library (and hopefully
+improving it in the process).
+
+This will be lacking in documentation and usage examples until I mostly
+finalize all the changes I'm intending on making.
+
 
 ## License
 
 Copyright © 2015-2016 Kira Inc.
+
+Various updates in this fork by Gered King (https://github.com/gered)
 
 Distributed under the MIT License.
