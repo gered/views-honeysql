@@ -16,7 +16,7 @@
                   (db-or-db-fn namespace)
                   db-or-db-fn)
           start (System/currentTimeMillis)
-          data  (j/query db (hsql/format (apply query-fn parameters)) :row-fn row-fn)
+          data  (j/query db (hsql/format (apply query-fn parameters)) {:row-fn row-fn})
           time  (- (System/currentTimeMillis) start)]
       (when (>= time 1000) (warn id "took" time "msecs"))
       data))
