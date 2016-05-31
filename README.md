@@ -1,4 +1,4 @@
-# views-honeysql
+# views.honeysql
 
 HoneySQL plugin for the [views](https://github.com/gered/views) library.
 
