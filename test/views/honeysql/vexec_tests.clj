@@ -30,7 +30,7 @@
 (deftest namespace-is-passed-along-to-hints-via-vexec
   (let [sql    {:insert-into :example
                 :values [{:field1 "test" :field2 "N" :field3 nil}]}
-        result (vexec! test-view-system test-db :foobar sql)]
+        result (vexec! test-view-system test-db sql {:namespace :foobar})]
     (is (called-with-args? :jdbc/insert! test-db (:insert-into sql) (first (:values sql))))
     (is (= :jdbc/insert!-return-value result))
     (is (called-with-args? :views/put-hints! test-view-system [(views/hint :foobar #{:example} hint-type)]))))

@@ -46,14 +46,14 @@
 
    Arguments are:
    - db: a clojure.java.jdbc database connection
-   - namespace (optional): a namespace that will be included in the hints sent out
-   - action-map: the HoneySQL map for the insert/update/delete SQL query"
-  ([^Atom view-system db namespace action-map]
-   (let [results   (execute-honeysql! db action-map)
-         hsql-hint (hint namespace (query-tables action-map) hint-type)]
-     (if-let [hints (:views-honeysql/hints db)]
-       (swap! hints conj hsql-hint)
-       (put-hints! view-system [hsql-hint]))
-     results))
-  ([^Atom view-system db action-map]
-    (vexec! view-system db nil action-map)))
+   - action-map: the HoneySQL map for the insert/update/delete SQL query
+
+   Options are:
+   - namespace: a namespace that will be included in the hints sent out"
+  [^Atom view-system db action-map & [{:keys [namespace] :as options}]]
+  (let [results   (execute-honeysql! db action-map)
+        hsql-hint (hint namespace (query-tables action-map) hint-type)]
+    (if-let [hints (:views-honeysql/hints db)]
+      (swap! hints conj hsql-hint)
+      (put-hints! view-system [hsql-hint]))
+    results))
