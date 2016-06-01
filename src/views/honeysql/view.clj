@@ -8,7 +8,7 @@
     [clojure.java.jdbc :as j]
     [clojure.tools.logging :refer [warn]]))
 
-(defrecord HSQLView [id db-or-db-fn query-fn row-fn]
+(defrecord HSQLView [id db-or-db-fn query-fn options]
   IView
   (id [_] id)
   (data [_ namespace parameters]
@@ -16,7 +16,9 @@
                   (db-or-db-fn namespace)
                   db-or-db-fn)
           start (System/currentTimeMillis)
-          data  (j/query db (hsql/format (apply query-fn parameters)) {:row-fn row-fn})
+          data  (j/query db
+                         (hsql/format (apply query-fn parameters))
+                         (select-keys options [:row-fn :result-set-fn]))
           time  (- (System/currentTimeMillis) start)]
       (when (>= time 1000) (warn id "took" time "msecs"))
       data))
@@ -30,5 +32,8 @@
   "Creates a Honey SQL view that uses a JDBC database configuration. The db passed in
    can either be a standard database connection map, or it can be a function that gets
    passed a namespace and returns a database connection map."
-  [id db-or-db-fn hsql-fn & {:keys [row-fn]}]
-  (HSQLView. id db-or-db-fn hsql-fn (or row-fn identity)))
+  [id db-or-db-fn hsql-fn & [{:keys [row-fn result-set-fn]
+                              :or   {row-fn        identity
+                                     result-set-fn doall}
+                              :as   options}]]
+  (HSQLView. id db-or-db-fn hsql-fn options))
