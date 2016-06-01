@@ -2,7 +2,7 @@
   (:import
     (clojure.lang Atom))
   (:require
-    [views.core :refer [view-system hint put-hints!]]
+    [views.core :refer [hint put-hints!]]
     [views.honeysql.util :refer [query-tables]]
     [honeysql.core :as hsql]
     [clojure.tools.logging :refer [error]]
