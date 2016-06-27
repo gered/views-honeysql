@@ -18,7 +18,7 @@ views are included within the same system.
 ## Leiningen
 
 ```clj
-[gered/views.honeysql "0.2-SNAPSHOT"]
+[gered/views.honeysql "0.2"]
 ```
 
 ### This is a fork!
