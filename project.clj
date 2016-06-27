@@ -1,4 +1,4 @@
-(defproject gered/views.honeysql "0.2"
+(defproject gered/views.honeysql "0.3-SNAPSHOT"
   :description  "HoneySQL view implementation for views"
   :url          "https://github.com/gered/views.honeysql"
 
